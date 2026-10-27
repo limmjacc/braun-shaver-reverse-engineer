@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1230" width="1000" height="1230" font-family="Helvetica, Arial, sans-serif">
 <rect width="1000" height="1230" fill="#ffffff"/>
 <text x="500" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">CY8C4125LQI-S425 (PSoC 4100S), 40-pin QFN, top view</text>
-<text x="500" y="64" text-anchor="middle" font-size="13" fill="#4b5563">Shaver charger PCB, 3.3 V supply. Pin 1 at the marked corner, numbering counterclockwise. Pin map unverified against the datasheet.</text>
+<text x="500" y="64" text-anchor="middle" font-size="13" fill="#4b5563">Shaver charger PCB, 3.3 V supply. Pin 1 at the marked corner, numbering counterclockwise. Pin map audited against datasheet 002-00122 Rev. *Q (Table 1, Figure 10).</text>
 <rect x="310" y="230" width="380" height="380" rx="10" fill="#1f2937" stroke="#111827" stroke-width="2"/>
 <circle cx="336" cy="256" r="9" fill="#9ca3af"/>
 <text x="354" y="261" font-size="12" fill="#d1d5db">pin 1</text>
@@ -177,5 +177,5 @@
 <text x="72" y="1110" font-size="13" fill="#374151">&#8226; The Nano drives 5 V. SWDCLK and SWDIO therefore pass through 1k / 2k dividers (about 3.3 V at the chip).</text>
 <text x="72" y="1130" font-size="13" fill="#374151">&#8226; Share ground only. Do not connect the Nano 5V pin to the board. VCCD (pin 31) is never to be driven.</text>
 <text x="72" y="1150" font-size="13" fill="#374151">&#8226; SWD does not function in Deep Sleep. Flash protection, if set, blocks memory reads.</text>
-<text x="72" y="1170" font-size="13" fill="#374151">&#8226; Unverified: the pin map and SRAM size have not been checked against the S425 datasheet row.</text>
+<text x="72" y="1170" font-size="13" fill="#374151">&#8226; Audit: pin map verified against the datasheet. The S425 suffix is not listed in the ordering table.</text>
 </svg>

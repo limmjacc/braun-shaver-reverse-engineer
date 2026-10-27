@@ -9,19 +9,20 @@ Status: untested against hardware. Treat everything here as a starting point for
 | Path | Content |
 |------|---------|
 | [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino) | Arduino sketch that bit-bangs SWD and dumps SRAM over the serial port |
-| [docs/psoc4125-pinout-diagram.svg](docs/psoc4125-pinout-diagram.svg) | 40-pin QFN pinout, colour-coded, with the wiring table |
-| [docs/nano-to-psoc-wiring.svg](docs/nano-to-psoc-wiring.svg) | Wiring schematic including the level-dropping dividers |
-| [docs/breadboard-pcb-nano-wiring.png](docs/breadboard-pcb-nano-wiring.png) | Photo of the shaver PCB beside the Nano on a breadboard |
-| [docs/psoc4125-chip-marking-closeup.png](docs/psoc4125-chip-marking-closeup.png) | Close-up of the package marking |
-| [docs/nano-clone-underside.png](docs/nano-clone-underside.png) | Underside of the Nano clone |
+| [docs/diagrams/psoc4125-pinout-diagram.svg](docs/diagrams/psoc4125-pinout-diagram.svg) | 40-pin QFN pinout, colour-coded, with the wiring table |
+| [docs/diagrams/nano-to-psoc-wiring.svg](docs/diagrams/nano-to-psoc-wiring.svg) | Wiring schematic including the level-dropping dividers |
+| [docs/photos/breadboard-pcb-nano-wiring.png](docs/photos/breadboard-pcb-nano-wiring.png) | Photo of the shaver PCB beside the Nano on a breadboard |
+| [docs/photos/psoc4125-chip-marking-closeup.png](docs/photos/psoc4125-chip-marking-closeup.png) | Close-up of the package marking |
+| [docs/photos/nano-clone-underside.png](docs/photos/nano-clone-underside.png) | Underside of the Nano clone |
 
 ## Target
 
-- Chip marking: `CY8C4125LQI-S425`, read from the close-up photo (2219 A 03, CYP616078). The suffix has not been confirmed against the datasheet.
+- Chip marking: `CY8C4125LQI-S425`, read from the close-up photo (2219 A 03, CYP616078). The suffix is uncertain: the datasheet ordering table (Table 39) lists no S425. The 4125 QFN codes it does list are S412, S413, S422, S423, S432 and S433. The last glyph may be misread, or this may be a customer-specific code. A sharper photo would settle it.
 - Family: Infineon/Cypress PSoC 4100S, Arm Cortex-M0+
 - Package: 40-pin QFN, 6x6x0.6 mm
 - Context: shaver charger PCB, 5 V DC input via the included charger
-- Datasheet: Infineon 002-10662 (PSoC 4100S datasheet)
+- Datasheet: Infineon 002-00122 Rev. *Q, 2024-02-27 (PSoC 4100S), stored at [docs/datasheets/psoc4100s-datasheet.pdf](docs/datasheets/psoc4100s-datasheet.pdf). The earlier reference to 002-10662 was incorrect.
+- 4125 family features per Table 39: 24 MHz CPU, 32 KB flash, 4 KB SRAM
 
 ### Measured supply rails
 
@@ -38,7 +39,7 @@ The board therefore runs at 3.3 V logic. This drives the wiring choices below.
 
 ### Pin table, 40-pin QFN
 
-Top view, pin 1 at the marked corner, numbering counterclockwise. See [the pinout diagram](docs/psoc4125-pinout-diagram.svg).
+Top view, pin 1 at the marked corner, numbering counterclockwise. See [the pinout diagram](docs/diagrams/psoc4125-pinout-diagram.svg).
 
 | Pin | Name  | Note |
 |-----|-------|------|
@@ -85,7 +86,7 @@ Top view, pin 1 at the marked corner, numbering counterclockwise. See [the pinou
 
 Exposed pad: ground.
 
-Verify this table against the current English datasheet for the exact ordering code before relying on it. The side of the package on which each pin number falls is assumed from the standard QFN layout. The adjacent VCCD, VDDD, VDDA and VSSA readings above are consistent with it.
+Audited against the datasheet: all 40 entries match the 40L QFN column of Table 1 (pp. 16 to 17). The pin 1 position and numbering direction match Figure 10 (package outline 001-80659, p. 52): pin 1 dot at the top-left of the top view, pins 1 to 10 down the left side, 11 to 20 along the bottom, 21 to 30 up the right side and 31 to 40 along the top from right to left. SWDIO and SWDCLK are the alternate functions `cpuss.swd_data` on P3.2 and `cpuss.swd_clk` on P3.3 (Table 2). The datasheet states that the exposed pad should be connected to VSS, or left floating. The measured rails are consistent with this table.
 
 ## Goal
 
@@ -93,7 +94,7 @@ Read SRAM (and flash, if unprotected) over SWD using a microcontroller as the de
 
 ## Debug host: Arduino Nano clone
 
-The board in use is a generic Nano V3-style clone: ATmega328P (TQFP-32), USB-C connector, a probable CH340G-style USB-serial chip and an AMS1117-style regulator. No maker marking is visible. See the [breadboard photo](docs/breadboard-pcb-nano-wiring.png) and the [underside photo](docs/nano-clone-underside.png). The chip markings in the underside photo are too small to read, so the USB-serial chip and regulator remain unconfirmed.
+The board in use is a generic Nano V3-style clone: ATmega328P (TQFP-32), USB-C connector, a probable CH340G-style USB-serial chip and an AMS1117-style regulator. No maker marking is visible. See the [breadboard photo](docs/photos/breadboard-pcb-nano-wiring.png) and the [underside photo](docs/photos/nano-clone-underside.png). The chip markings in the underside photo are too small to read, so the USB-serial chip and regulator remain unconfirmed.
 
 Many clones ship with the old bootloader. If an upload fails with a sync error, select the old bootloader (`arduino:avr:nano:cpu=atmega328old`).
 
@@ -128,11 +129,11 @@ halt
 dump_image sram.bin 0x20000000 0x1000
 ```
 
-SRAM base is assumed at 0x20000000 and size at 4 KB for the "4125" part number (per the ordering table). Not verified against the actual chip.
+SRAM size is 4 KB for the 4125 family (Table 39). The base address of 0x20000000 is standard for Cortex-M0+ and is not stated in the datasheet text.
 
 ## Option B: Arduino Nano bit-bang (ATmega328P, 5 V logic, 3.3 V target)
 
-See the [wiring schematic](docs/nano-to-psoc-wiring.svg) and the [pinout diagram](docs/psoc4125-pinout-diagram.svg).
+See the [wiring schematic](docs/diagrams/nano-to-psoc-wiring.svg) and the [pinout diagram](docs/diagrams/psoc4125-pinout-diagram.svg).
 
 | Nano pin | Connection | Chip pin |
 |----------|------------|----------|
@@ -160,7 +161,10 @@ Reviewed behaviour:
 ## Known risks / open items
 
 - **Missing PSoC 4 acquire step.** The sketch sends a line reset and reads DPIDR, but it does not perform the PSoC 4 acquire. That procedure writes the TEST_MODE register (recalled as 0x40030014, bit 31) inside the short window after XRES release, to halt the CPU before the firmware runs. Without it, the firmware may reconfigure the SWD pins or enter Deep Sleep and the link will time out. Confirm the register address and timing window against the PSoC 4 Programming Specification before adding it.
-- The ordering suffix (S425) is read from the photo, not confirmed against the datasheet. SRAM size and feature set are assumed from the "4125" row of the ordering table.
+- The ordering suffix (S425) is read from the photo and does not appear in the datasheet ordering table. The feature set is therefore assumed from the 4125 family rows.
+- **Firmware may have disabled debug.** The datasheet (p. 8) states that the debug circuits are enabled by default and can be disabled in firmware. The only way to re-enable them is to erase the entire device and reprogram it, which destroys the firmware under study. With maximum device security enabled, all programming, debug and test interfaces are disabled. Either condition would explain a chip that never responds on SWD, and it is a plausible reading of the observed all-zero ACKs.
+- SWD clock limits (Table 30, SID213 and SID214): 14 MHz at 3.3 V to 5.5 V, 7 MHz at 1.71 V to 3.3 V, and at most one third of the CPU clock. The sketch runs well below these limits.
+- The datasheet does not describe the acquire procedure or the TEST_MODE register. The PSoC 4 Programming Specification is the document to obtain for that.
 - DP IDR for a Cortex-M0+ SW-DP is typically `0x0BC11477`. Anything other than `0x00000000` or `0xFFFFFFFF` indicates the link is up.
 - If `link_up()` times out, the firmware may have remapped the SWD pins (Smart I/O / HSIOM), or the part is asleep when probed. The XRES pulse in `setup()` attempts to catch the part at boot, following the same idea as the PSoC 4 "acquire" procedure.
 - Flash protection, if set, blocks reads at the hardware level. No bypass is known or provided.

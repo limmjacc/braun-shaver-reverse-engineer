@@ -139,10 +139,28 @@ static uint8_t dump_mem(uint32_t base, uint16_t words) {
   return ACK_OK;
 }
 
+static void probe_stats(void) {
+  uint16_t n[8] = {0};                                  // histogram of DPIDR read ACKs, index = ack (7 also counts parity errors)
+  uint32_t v = 0;
+  for (uint8_t t = 0; t < 20u; t++) {
+    DDRD |= XRES_MASK; delay(5); DDRD &= (uint8_t)~XRES_MASK;
+    for (uint8_t i = 0; i < 10u; i++) {
+      swd_line_reset();
+      const uint8_t ack = swd_xfer(0, 1, 0x0, &v);
+      n[(ack > 7u) ? 7u : ack]++;
+    }
+  }
+  Serial.print(F("ack histogram 0..7:"));
+  for (uint8_t i = 0; i < 8u; i++) { Serial.print(' '); Serial.print(n[i]); }
+  Serial.println();
+}
+
 void setup() {
   uint32_t id = 0;
   uint8_t ack = ERR_TIMEOUT;
   Serial.begin(115200);
+  DDRD |= SWCLK_MASK;
+  probe_stats();
   PORTD &= (uint8_t)~(SWCLK_MASK | SWDIO_MASK | XRES_MASK);
   DDRD  |= SWCLK_MASK;
   DDRD  |= XRES_MASK; delay(5); DDRD &= (uint8_t)~XRES_MASK;   // pulse XRES low, then release
