@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1230" width="1000" height="1230" font-family="Helvetica, Arial, sans-serif">
+<rect width="1000" height="1230" fill="#ffffff"/>
+<text x="500" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#111827">CY8C4125LQI-S425 (PSoC 4100S), 40-pin QFN, top view</text>
+<text x="500" y="64" text-anchor="middle" font-size="13" fill="#4b5563">Shaver charger PCB, 3.3 V supply. Pin 1 at the marked corner, numbering counterclockwise. Pin map unverified against the datasheet.</text>
+<rect x="310" y="230" width="380" height="380" rx="10" fill="#1f2937" stroke="#111827" stroke-width="2"/>
+<circle cx="336" cy="256" r="9" fill="#9ca3af"/>
+<text x="354" y="261" font-size="12" fill="#d1d5db">pin 1</text>
+<text x="520" y="380" text-anchor="middle" font-size="18" font-family="Menlo, monospace" fill="#e5e7eb">CY8C4125</text>
+<text x="520" y="406" text-anchor="middle" font-size="18" font-family="Menlo, monospace" fill="#e5e7eb">LQI-S425</text>
+<text x="520" y="432" text-anchor="middle" font-size="18" font-family="Menlo, monospace" fill="#e5e7eb">2219 A 03</text>
+<text x="520" y="458" text-anchor="middle" font-size="18" font-family="Menlo, monospace" fill="#e5e7eb">CYP616078</text>
+<rect x="455" y="495" width="150" height="26" rx="4" fill="#374151"/>
+<text x="530" y="513" text-anchor="middle" font-size="12" fill="#e5e7eb">exposed pad: ground</text>
+<rect x="284" y="258.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="271.0" font-size="11" fill="#9ca3af">1</text>
+<text x="276" y="272.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.0</text>
+<rect x="284" y="292.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="305.0" font-size="11" fill="#9ca3af">2</text>
+<text x="276" y="306.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.1</text>
+<rect x="284" y="326.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="339.0" font-size="11" fill="#9ca3af">3</text>
+<text x="276" y="340.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.2</text>
+<rect x="284" y="360.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="373.0" font-size="11" fill="#9ca3af">4</text>
+<text x="276" y="374.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.3</text>
+<rect x="284" y="394.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="407.0" font-size="11" fill="#9ca3af">5</text>
+<text x="276" y="408.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.4</text>
+<rect x="284" y="428.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="441.0" font-size="11" fill="#9ca3af">6</text>
+<text x="276" y="442.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.5</text>
+<rect x="284" y="462.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="475.0" font-size="11" fill="#9ca3af">7</text>
+<text x="276" y="476.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.6</text>
+<rect x="284" y="496.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="509.0" font-size="11" fill="#9ca3af">8</text>
+<text x="276" y="510.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P2.7</text>
+<rect x="284" y="530.0" width="26" height="18" fill="#d1d5db" stroke="#374151"/>
+<text x="317" y="543.0" font-size="11" fill="#9ca3af">9</text>
+<text x="276" y="544.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">VSSD  (GND)</text>
+<rect x="284" y="564.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="317" y="577.0" font-size="11" fill="#9ca3af">10</text>
+<text x="276" y="578.0" text-anchor="end" font-size="14" font-weight="400" fill="#111827">P3.0</text>
+<rect x="338.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="347.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">11</text>
+<text transform="translate(352.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P3.1</text>
+<rect x="372.0" y="610" width="18" height="26" fill="#fde68a" stroke="#b45309"/>
+<text x="381.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">12</text>
+<text transform="translate(386.0,646) rotate(90)" font-size="14" font-weight="700" fill="#111827">P3.2 SWDIO</text>
+<rect x="406.0" y="610" width="18" height="26" fill="#fde68a" stroke="#b45309"/>
+<text x="415.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">13</text>
+<text transform="translate(420.0,646) rotate(90)" font-size="14" font-weight="700" fill="#111827">P3.3 SWDCLK</text>
+<rect x="440.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="449.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">14</text>
+<text transform="translate(454.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P3.4</text>
+<rect x="474.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="483.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">15</text>
+<text transform="translate(488.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P3.5</text>
+<rect x="508.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="517.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">16</text>
+<text transform="translate(522.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P3.6</text>
+<rect x="542.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="551.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">17</text>
+<text transform="translate(556.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P3.7</text>
+<rect x="576.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="585.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">18</text>
+<text transform="translate(590.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P4.0</text>
+<rect x="610.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="619.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">19</text>
+<text transform="translate(624.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P4.1</text>
+<rect x="644.0" y="610" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="653.0" y="603" text-anchor="middle" font-size="11" fill="#9ca3af">20</text>
+<text transform="translate(658.0,646) rotate(90)" font-size="14" font-weight="400" fill="#111827">P4.2</text>
+<rect x="690" y="564.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="577.0" text-anchor="end" font-size="11" fill="#9ca3af">21</text>
+<text x="724" y="578.0" font-size="14" font-weight="400" fill="#111827">P4.3</text>
+<rect x="690" y="530.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="543.0" text-anchor="end" font-size="11" fill="#9ca3af">22</text>
+<text x="724" y="544.0" font-size="14" font-weight="400" fill="#111827">P0.0</text>
+<rect x="690" y="496.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="509.0" text-anchor="end" font-size="11" fill="#9ca3af">23</text>
+<text x="724" y="510.0" font-size="14" font-weight="400" fill="#111827">P0.1</text>
+<rect x="690" y="462.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="475.0" text-anchor="end" font-size="11" fill="#9ca3af">24</text>
+<text x="724" y="476.0" font-size="14" font-weight="400" fill="#111827">P0.2</text>
+<rect x="690" y="428.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="441.0" text-anchor="end" font-size="11" fill="#9ca3af">25</text>
+<text x="724" y="442.0" font-size="14" font-weight="400" fill="#111827">P0.3</text>
+<rect x="690" y="394.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="407.0" text-anchor="end" font-size="11" fill="#9ca3af">26</text>
+<text x="724" y="408.0" font-size="14" font-weight="400" fill="#111827">P0.4</text>
+<rect x="690" y="360.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="373.0" text-anchor="end" font-size="11" fill="#9ca3af">27</text>
+<text x="724" y="374.0" font-size="14" font-weight="400" fill="#111827">P0.5</text>
+<rect x="690" y="326.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="339.0" text-anchor="end" font-size="11" fill="#9ca3af">28</text>
+<text x="724" y="340.0" font-size="14" font-weight="400" fill="#111827">P0.6</text>
+<rect x="690" y="292.0" width="26" height="18" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="683" y="305.0" text-anchor="end" font-size="11" fill="#9ca3af">29</text>
+<text x="724" y="306.0" font-size="14" font-weight="400" fill="#111827">P0.7</text>
+<rect x="690" y="258.0" width="26" height="18" fill="#fecaca" stroke="#b91c1c"/>
+<text x="683" y="271.0" text-anchor="end" font-size="11" fill="#9ca3af">30</text>
+<text x="724" y="272.0" font-size="14" font-weight="700" fill="#111827">XRES  (reset, active low)</text>
+<rect x="644.0" y="204" width="18" height="26" fill="#fed7aa" stroke="#c2410c"/>
+<text x="653.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">31</text>
+<text transform="translate(658.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">VCCD 1.8 V</text>
+<rect x="610.0" y="204" width="18" height="26" fill="#fed7aa" stroke="#c2410c"/>
+<text x="619.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">32</text>
+<text transform="translate(624.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">VDDD 3.3 V</text>
+<rect x="576.0" y="204" width="18" height="26" fill="#fed7aa" stroke="#c2410c"/>
+<text x="585.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">33</text>
+<text transform="translate(590.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">VDDA 3.3 V</text>
+<rect x="542.0" y="204" width="18" height="26" fill="#d1d5db" stroke="#374151"/>
+<text x="551.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">34</text>
+<text transform="translate(556.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">VSSA</text>
+<rect x="508.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="517.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">35</text>
+<text transform="translate(522.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.0</text>
+<rect x="474.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="483.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">36</text>
+<text transform="translate(488.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.1</text>
+<rect x="440.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="449.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">37</text>
+<text transform="translate(454.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.2</text>
+<rect x="406.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="415.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">38</text>
+<text transform="translate(420.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.3</text>
+<rect x="372.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="381.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">39</text>
+<text transform="translate(386.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.4</text>
+<rect x="338.0" y="204" width="18" height="26" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="347.0" y="246" text-anchor="middle" font-size="11" fill="#9ca3af">40</text>
+<text transform="translate(352.0,194) rotate(-90)" font-size="14" font-weight="400" fill="#111827">P1.7 VREF</text>
+<text x="60" y="780" font-size="14" font-weight="700" fill="#111827">Legend</text>
+<rect x="60" y="792" width="22" height="16" fill="#fde68a" stroke="#b45309"/>
+<text x="90" y="805" font-size="13" fill="#374151">SWD debug pins</text>
+<rect x="230" y="792" width="22" height="16" fill="#fecaca" stroke="#b91c1c"/>
+<text x="260" y="805" font-size="13" fill="#374151">XRES</text>
+<rect x="400" y="792" width="22" height="16" fill="#fed7aa" stroke="#c2410c"/>
+<text x="430" y="805" font-size="13" fill="#374151">Supply / regulator</text>
+<rect x="570" y="792" width="22" height="16" fill="#d1d5db" stroke="#374151"/>
+<text x="600" y="805" font-size="13" fill="#374151">Ground</text>
+<rect x="740" y="792" width="22" height="16" fill="#e0f2fe" stroke="#0369a1"/>
+<text x="770" y="805" font-size="13" fill="#374151">GPIO</text>
+<text x="60" y="850" font-size="16" font-weight="700" fill="#111827">Arduino Nano clone (5 V logic) to PSoC (3.3 V logic): wiring with level-dropping dividers</text>
+<rect x="60" y="868" width="880" height="26" fill="#f3f4f6"/>
+<text x="72" y="886" font-size="13" font-weight="700" fill="#374151">Nano pin</text>
+<text x="330" y="886" font-size="13" font-weight="700" fill="#374151">Series element</text>
+<text x="560" y="886" font-size="13" font-weight="700" fill="#374151">Chip pin</text>
+<rect x="60" y="894" width="880" height="28" fill="#ffffff" stroke="#e5e7eb"/>
+<rect x="60" y="894" width="8" height="28" fill="#b45309"/>
+<text x="78" y="913" font-size="14" fill="#111827">Nano D2 (PD2)</text>
+<text x="330" y="913" font-size="14" fill="#111827">1k in series, 2k to GND</text>
+<text x="560" y="913" font-size="14" fill="#111827">pin 13, SWDCLK (P3.3)</text>
+<rect x="60" y="922" width="880" height="28" fill="#ffffff" stroke="#e5e7eb"/>
+<rect x="60" y="922" width="8" height="28" fill="#b45309"/>
+<text x="78" y="941" font-size="14" fill="#111827">Nano D3 (PD3)</text>
+<text x="330" y="941" font-size="14" fill="#111827">1k in series, 2k to GND</text>
+<text x="560" y="941" font-size="14" fill="#111827">pin 12, SWDIO (P3.2)</text>
+<rect x="60" y="950" width="880" height="28" fill="#ffffff" stroke="#e5e7eb"/>
+<rect x="60" y="950" width="8" height="28" fill="#b91c1c"/>
+<text x="78" y="969" font-size="14" fill="#111827">Nano D4 (PD4)</text>
+<text x="330" y="969" font-size="14" fill="#111827">direct, pulls low only</text>
+<text x="560" y="969" font-size="14" fill="#111827">pin 30, XRES</text>
+<rect x="60" y="978" width="880" height="28" fill="#ffffff" stroke="#e5e7eb"/>
+<rect x="60" y="978" width="8" height="28" fill="#374151"/>
+<text x="78" y="997" font-size="14" fill="#111827">Nano GND</text>
+<text x="330" y="997" font-size="14" fill="#111827">direct</text>
+<text x="560" y="997" font-size="14" fill="#111827">shaver board GND</text>
+<rect x="60" y="1006" width="880" height="28" fill="#ffffff" stroke="#e5e7eb"/>
+<rect x="60" y="1006" width="8" height="28" fill="#c2410c"/>
+<text x="78" y="1025" font-size="14" fill="#111827">Nano 5V</text>
+<text x="330" y="1025" font-size="14" fill="#111827">NOT connected</text>
+<text x="560" y="1025" font-size="14" fill="#111827">(share ground only)</text>
+<text x="60" y="1068" font-size="14" font-weight="700" fill="#b91c1c">Before connecting any signal wire</text>
+<text x="72" y="1090" font-size="13" fill="#374151">&#8226; Measured: VDDD and VDDA are 3.3 V, VCCD is 1.8 V. A GPIO may not exceed VDD + 0.5 V (3.8 V).</text>
+<text x="72" y="1110" font-size="13" fill="#374151">&#8226; The Nano drives 5 V. SWDCLK and SWDIO therefore pass through 1k / 2k dividers (about 3.3 V at the chip).</text>
+<text x="72" y="1130" font-size="13" fill="#374151">&#8226; Share ground only. Do not connect the Nano 5V pin to the board. VCCD (pin 31) is never to be driven.</text>
+<text x="72" y="1150" font-size="13" fill="#374151">&#8226; SWD does not function in Deep Sleep. Flash protection, if set, blocks memory reads.</text>
+<text x="72" y="1170" font-size="13" fill="#374151">&#8226; Unverified: the pin map and SRAM size have not been checked against the S425 datasheet row.</text>
+</svg>
