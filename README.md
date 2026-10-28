@@ -1,14 +1,20 @@
 # Braun shaver charger PCB: PSoC 4125 SWD reverse engineering
 
-Notes, diagrams and a bit-bang sketch for reading memory from the PSoC 4125 on a shaver charger PCB over SWD, using an Arduino Nano clone as the debug host.
+Notes, diagrams and an Arduino Nano bit-bang tool for reading memory from the PSoC 4125 on a shaver charger PCB over SWD.
 
-Status: untested against hardware. Treat everything here as a starting point for review, not a verified design.
+Status: the Nano reliably enters the chip's Test Mode and can perform standard SWD memory reads. Those reads currently fault, in a pattern that matches Infineon's documented PROTECTED chip-level protection -- see [Status: memory access blocked](#status-memory-access-blocked) below and [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for the full investigation. Wiring and pinout are verified against the datasheet; the acquire sequence is verified working against the real chip.
 
 ## Repository contents
 
 | Path | Content |
 |------|---------|
-| [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino) | Arduino sketch that bit-bangs SWD and dumps SRAM over the serial port |
+| [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino) | Arduino sketch: acquires the chip (enters Test Mode) and dumps SRAM + flash over serial |
+| [nano_protection_probe/nano_protection_probe.ino](nano_protection_probe/nano_protection_probe.ino) | Preserved diagnostic sketch that isolated the memory-access fault (see research doc) |
+| [scripts/flash_and_capture.sh](scripts/flash_and_capture.sh), [scripts/capture_serial.py](scripts/capture_serial.py) | Compile, upload and capture serial output from the Nano, macOS, old-bootloader clones |
+| [scripts/parse_dump.py](scripts/parse_dump.py) | Turns a captured `BEGIN_x`/`END_x` log into `.bin` and Intel HEX files, run automatically by `flash_and_capture.sh` |
+| [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) | Full research log: every method tried, why, what happened, and the conclusion |
+| [docs/datasheets/psoc4100s-datasheet.pdf](docs/datasheets/psoc4100s-datasheet.pdf) | Infineon PSoC 4100S datasheet (002-00122) |
+| [docs/datasheets/psoc4-programming-spec.pdf](docs/datasheets/psoc4-programming-spec.pdf) | Infineon CY8C4xxx/CYBLxxxx programming specification (002-22325) -- acquire sequence, register map, chip-level protection |
 | [docs/diagrams/psoc4125-pinout-diagram.svg](docs/diagrams/psoc4125-pinout-diagram.svg) | 40-pin QFN pinout, colour-coded, with the wiring table |
 | [docs/diagrams/nano-to-psoc-wiring.svg](docs/diagrams/nano-to-psoc-wiring.svg) | Wiring schematic including the level-dropping dividers |
 | [docs/photos/breadboard-pcb-nano-wiring.png](docs/photos/breadboard-pcb-nano-wiring.png) | Photo of the shaver PCB beside the Nano on a breadboard |
@@ -150,23 +156,23 @@ Divider reasoning:
 - XRES connects directly. The sketch only pulls the line low and then releases it to high-impedance, and the internal pull-up to 3.3 V completes the release. A 3.3 V level is a valid input for the Nano.
 - Divider edge rates are not a concern at the bit-bang clock rate.
 
-The sketch is [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino). It performs a line reset, reads DPIDR, powers up the debug domain and dumps 4 KB of SRAM from 0x20000000 as `address value` lines at 115200 baud.
+The sketch is [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino). On every run it:
 
-Reviewed behaviour:
+1. Pulses XRES and races the chip's post-reset acquire window with a fully unrolled (loop-free) bit-bang, fast enough to clear the datasheet's 1.5-14 MHz SWDCLK floor (Table 3-4 of the programming spec). This reliably enters Test Mode (confirmed 10/10 on the bench) -- see [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for why the original loop-based bit-bang never could, and how this was found and fixed.
+2. Polls `SROM_PRIVILEGED_BIT` and the `CTRL/STAT` power-up acknowledgment, per the programming spec's Step 1A (section 4.3).
+3. Dumps SRAM (1024 words from 0x20000000) then flash (8192 words from 0x00000000) via the standard ADIv5 AP sequence (TAR write, posted DRW read, RDBUFF read), printing `BEGIN_SRAM` / `address value` lines / `END_SRAM`, then the same for flash, at 115200 baud.
 
-- Clock edges and sampling points follow the usual bit-bang SWD convention.
-- The pipelined AP read sequence in `dump_mem` is correct: one discarded posted read, then DRW reads, then RDBUFF for the final word.
-- `CSW_WORD_INC` (0x23000012) should be checked against the ADIv5 specification.
+### Status: memory access blocked
+
+Step 3 currently fails immediately (`ERR 4`, an ADIv5 FAULT response) on the first word of both regions. This was diagnosed in detail -- see [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for the full log, including every CSW configuration and SROM call tried. In short: the chip's Silicon ID reads fine via an SROM call (`status=0xA0111B05`, Family ID `0xAB`), proving the CPU is genuinely under debugger control, but every direct memory access -- SRAM, flash, even an unrelated guessed peripheral address -- hard-faults. This matches Infineon's documented **PROTECTED** chip-level protection (programming spec, Appendix A) exactly: Silicon ID readable, flash/SRAM/most registers NACKed. Moving back to OPEN mode is documented as erasing all flash first, so there is no non-destructive path to the existing firmware found or available via these two pins.
+
+The diagnostic sequence that established this is preserved as [nano_protection_probe/nano_protection_probe.ino](nano_protection_probe/nano_protection_probe.ino). `dump_mem()` in the main sketch is left as-is: it is the correct, spec-compliant way to read memory and needs no changes if the chip is ever in OPEN mode.
 
 ## Known risks / open items
 
-- **Missing PSoC 4 acquire step.** The sketch sends a line reset and reads DPIDR, but it does not perform the PSoC 4 acquire. That procedure writes the TEST_MODE register (recalled as 0x40030014, bit 31) inside the short window after XRES release, to halt the CPU before the firmware runs. Without it, the firmware may reconfigure the SWD pins or enter Deep Sleep and the link will time out. Confirm the register address and timing window against the PSoC 4 Programming Specification before adding it.
-- The ordering suffix (S425) is read from the photo and does not appear in the datasheet ordering table. The feature set is therefore assumed from the 4125 family rows.
-- **Firmware may have disabled debug.** The datasheet (p. 8) states that the debug circuits are enabled by default and can be disabled in firmware. The only way to re-enable them is to erase the entire device and reprogram it, which destroys the firmware under study. With maximum device security enabled, all programming, debug and test interfaces are disabled. Either condition would explain a chip that never responds on SWD, and it is a plausible reading of the observed all-zero ACKs.
-- SWD clock limits (Table 30, SID213 and SID214): 14 MHz at 3.3 V to 5.5 V, 7 MHz at 1.71 V to 3.3 V, and at most one third of the CPU clock. The sketch runs well below these limits.
-- The datasheet does not describe the acquire procedure or the TEST_MODE register. The PSoC 4 Programming Specification is the document to obtain for that.
-- DP IDR for a Cortex-M0+ SW-DP is typically `0x0BC11477`. Anything other than `0x00000000` or `0xFFFFFFFF` indicates the link is up.
-- If `link_up()` times out, the firmware may have remapped the SWD pins (Smart I/O / HSIOM), or the part is asleep when probed. The XRES pulse in `setup()` attempts to catch the part at boot, following the same idea as the PSoC 4 "acquire" procedure.
-- Flash protection, if set, blocks reads at the hardware level. No bypass is known or provided.
+- **Memory access protected.** See "Status: memory access blocked" above and the research doc. This is the main open item; everything below is secondary.
+- The ordering suffix (S425) is read from the photo and does not appear in the datasheet ordering table. The feature set is therefore assumed from the 4125 family rows. The Silicon ID actually read from the chip (Hi=`0x1B`, Family=`0xAB`, Revision=`0x11`) has not yet been cross-referenced against a clean copy of the datasheet's Silicon ID table (Table 1-1 of the programming spec); the extracted text was too garbled to align columns reliably.
+- SWD clock limits (Table 30, SID213 and SID214 of the datasheet): 14 MHz at 3.3 V to 5.5 V, 7 MHz at 1.71 V to 3.3 V, and at most one third of the CPU clock. The current sketch's unrolled bit-bang has not been precisely measured against this ceiling (only confirmed to be fast enough in practice); see the research doc for the measured floor it had to clear.
+- DP IDR for a Cortex-M0+ SW-DP is `0x0BC11477`, confirmed read from the actual chip.
 - The pad-to-pin identification of the supply rails rests on voltage readings and visual inspection. Confirm with continuity that the 1.8 V pad is the VCCD pin.
-- Code is untested against actual hardware.
+- `CSW_WORD_INC` (0x23000012, used only if memory access is ever unblocked) should be checked against the ADIv5 specification; a simpler proven-working value (`CSW_WORD_ONLY`, 0x00000002) is used internally during acquire.
