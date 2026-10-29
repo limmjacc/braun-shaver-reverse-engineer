@@ -1,25 +1,28 @@
 # Braun shaver charger PCB: PSoC 4125 SWD reverse engineering
 
-Notes, diagrams and an Arduino Nano bit-bang tool for reading memory from the PSoC 4125 on a shaver charger PCB over SWD.
+Notes, diagrams and debug-host tools for reading memory from the PSoC 4125 on a shaver charger PCB over SWD. Two debug hosts are used, each in its own top-level folder with its own `docs/` subfolder for host-specific material: an Arduino Nano clone ([/arduino](arduino), docs in [arduino/docs](arduino/docs)), and a BeagleBone Black ([/beaglebone](beaglebone), docs in [beaglebone/docs](beaglebone/docs)) being brought up as a likely faster, more capable successor. The root [/docs](docs) holds only project-wide, host-independent material about the *target* chip itself: datasheets, the chip's own pinout diagram and marking photo.
 
-Status: the Nano reliably enters the chip's Test Mode and can perform standard SWD memory reads. Those reads currently fault, in a pattern that matches Infineon's documented PROTECTED chip-level protection -- see [Status: memory access blocked](#status-memory-access-blocked) below and [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for the full investigation. Wiring and pinout are verified against the datasheet; the acquire sequence is verified working against the real chip.
+Status: the Nano reliably enters the chip's Test Mode and can perform standard SWD memory reads. Those reads currently fault, in a pattern that matches Infineon's documented PROTECTED chip-level protection -- see [Status: memory access blocked](#status-memory-access-blocked) below and [arduino/docs/swd-read-methods-research.md](arduino/docs/swd-read-methods-research.md) for the full investigation. Wiring and pinout are verified against the datasheet; the acquire sequence is verified working against the real chip. The BeagleBone is not yet wired to the target; see [beaglebone/README.md](beaglebone/README.md) for its current state.
 
 ## Repository contents
 
 | Path | Content |
 |------|---------|
-| [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino) | Arduino sketch: acquires the chip (enters Test Mode) and dumps SRAM + flash over serial |
-| [nano_protection_probe/nano_protection_probe.ino](nano_protection_probe/nano_protection_probe.ino) | Preserved diagnostic sketch that isolated the memory-access fault (see research doc) |
-| [scripts/flash_and_capture.sh](scripts/flash_and_capture.sh), [scripts/capture_serial.py](scripts/capture_serial.py) | Compile, upload and capture serial output from the Nano, macOS, old-bootloader clones |
-| [scripts/parse_dump.py](scripts/parse_dump.py) | Turns a captured `BEGIN_x`/`END_x` log into `.bin` and Intel HEX files, run automatically by `flash_and_capture.sh` |
-| [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) | Full research log: every method tried, why, what happened, and the conclusion |
+| [arduino/nano_swd_dump/nano_swd_dump.ino](arduino/nano_swd_dump/nano_swd_dump.ino) | Arduino sketch: acquires the chip (enters Test Mode) and dumps SRAM + flash over serial |
+| [arduino/nano_protection_probe/nano_protection_probe.ino](arduino/nano_protection_probe/nano_protection_probe.ino) | Preserved diagnostic sketch that isolated the memory-access fault (see research doc) |
+| [arduino/scripts/flash_and_capture.sh](arduino/scripts/flash_and_capture.sh), [arduino/scripts/capture_serial.py](arduino/scripts/capture_serial.py) | Compile, upload and capture serial output from the Nano, macOS, old-bootloader clones |
+| [arduino/scripts/parse_dump.py](arduino/scripts/parse_dump.py) | Turns a captured `BEGIN_x`/`END_x` log into `.bin` and Intel HEX files, run automatically by `flash_and_capture.sh` |
+| [beaglebone/README.md](beaglebone/README.md) | BeagleBone Black as-received state, how to reach it, and what's left before it can replace the Nano |
+| [arduino/docs/swd-read-methods-research.md](arduino/docs/swd-read-methods-research.md) | Full research log: every method tried, why, what happened, and the conclusion |
+| [arduino/docs/project-log-2026-10-27.md](arduino/docs/project-log-2026-10-27.md) | Exhaustive session log: hardware, wiring, every sketch revision, every diagnostic result |
+| [beaglebone/docs/](beaglebone/docs/) | Reserved for BeagleBone-specific documentation; empty until the board is wired to the target |
 | [docs/datasheets/psoc4100s-datasheet.pdf](docs/datasheets/psoc4100s-datasheet.pdf) | Infineon PSoC 4100S datasheet (002-00122) |
 | [docs/datasheets/psoc4-programming-spec.pdf](docs/datasheets/psoc4-programming-spec.pdf) | Infineon CY8C4xxx/CYBLxxxx programming specification (002-22325) -- acquire sequence, register map, chip-level protection |
 | [docs/diagrams/psoc4125-pinout-diagram.svg](docs/diagrams/psoc4125-pinout-diagram.svg) | 40-pin QFN pinout, colour-coded, with the wiring table |
-| [docs/diagrams/nano-to-psoc-wiring.svg](docs/diagrams/nano-to-psoc-wiring.svg) | Wiring schematic including the level-dropping dividers |
-| [docs/photos/breadboard-pcb-nano-wiring.png](docs/photos/breadboard-pcb-nano-wiring.png) | Photo of the shaver PCB beside the Nano on a breadboard |
+| [arduino/docs/diagrams/nano-to-psoc-wiring.svg](arduino/docs/diagrams/nano-to-psoc-wiring.svg) | Wiring schematic including the level-dropping dividers |
+| [arduino/docs/photos/breadboard-pcb-nano-wiring.png](arduino/docs/photos/breadboard-pcb-nano-wiring.png) | Photo of the shaver PCB beside the Nano on a breadboard |
 | [docs/photos/psoc4125-chip-marking-closeup.png](docs/photos/psoc4125-chip-marking-closeup.png) | Close-up of the package marking |
-| [docs/photos/nano-clone-underside.png](docs/photos/nano-clone-underside.png) | Underside of the Nano clone |
+| [arduino/docs/photos/nano-clone-underside.png](arduino/docs/photos/nano-clone-underside.png) | Underside of the Nano clone |
 
 ## Target
 
@@ -100,7 +103,7 @@ Read SRAM (and flash, if unprotected) over SWD using a microcontroller as the de
 
 ## Debug host: Arduino Nano clone
 
-The board in use is a generic Nano V3-style clone: ATmega328P (TQFP-32), USB-C connector, a probable CH340G-style USB-serial chip and an AMS1117-style regulator. No maker marking is visible. See the [breadboard photo](docs/photos/breadboard-pcb-nano-wiring.png) and the [underside photo](docs/photos/nano-clone-underside.png). The chip markings in the underside photo are too small to read, so the USB-serial chip and regulator remain unconfirmed.
+The board in use is a generic Nano V3-style clone: ATmega328P (TQFP-32), USB-C connector, a probable CH340G-style USB-serial chip and an AMS1117-style regulator. No maker marking is visible. See the [breadboard photo](arduino/docs/photos/breadboard-pcb-nano-wiring.png) and the [underside photo](arduino/docs/photos/nano-clone-underside.png). The chip markings in the underside photo are too small to read, so the USB-serial chip and regulator remain unconfirmed.
 
 Many clones ship with the old bootloader. If an upload fails with a sync error, select the old bootloader (`arduino:avr:nano:cpu=atmega328old`).
 
@@ -139,7 +142,7 @@ SRAM size is 4 KB for the 4125 family (Table 39). The base address of 0x20000000
 
 ## Option B: Arduino Nano bit-bang (ATmega328P, 5 V logic, 3.3 V target)
 
-See the [wiring schematic](docs/diagrams/nano-to-psoc-wiring.svg) and the [pinout diagram](docs/diagrams/psoc4125-pinout-diagram.svg).
+See the [wiring schematic](arduino/docs/diagrams/nano-to-psoc-wiring.svg) and the [pinout diagram](docs/diagrams/psoc4125-pinout-diagram.svg).
 
 | Nano pin | Connection | Chip pin |
 |----------|------------|----------|
@@ -156,17 +159,17 @@ Divider reasoning:
 - XRES connects directly. The sketch only pulls the line low and then releases it to high-impedance, and the internal pull-up to 3.3 V completes the release. A 3.3 V level is a valid input for the Nano.
 - Divider edge rates are not a concern at the bit-bang clock rate.
 
-The sketch is [nano_swd_dump/nano_swd_dump.ino](nano_swd_dump/nano_swd_dump.ino). On every run it:
+The sketch is [arduino/nano_swd_dump/nano_swd_dump.ino](arduino/nano_swd_dump/nano_swd_dump.ino). On every run it:
 
-1. Pulses XRES and races the chip's post-reset acquire window with a fully unrolled (loop-free) bit-bang, fast enough to clear the datasheet's 1.5-14 MHz SWDCLK floor (Table 3-4 of the programming spec). This reliably enters Test Mode (confirmed 10/10 on the bench) -- see [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for why the original loop-based bit-bang never could, and how this was found and fixed.
+1. Pulses XRES and races the chip's post-reset acquire window with a fully unrolled (loop-free) bit-bang, fast enough to clear the datasheet's 1.5-14 MHz SWDCLK floor (Table 3-4 of the programming spec). This reliably enters Test Mode (confirmed 10/10 on the bench) -- see [arduino/docs/swd-read-methods-research.md](arduino/docs/swd-read-methods-research.md) for why the original loop-based bit-bang never could, and how this was found and fixed.
 2. Polls `SROM_PRIVILEGED_BIT` and the `CTRL/STAT` power-up acknowledgment, per the programming spec's Step 1A (section 4.3).
 3. Dumps SRAM (1024 words from 0x20000000) then flash (8192 words from 0x00000000) via the standard ADIv5 AP sequence (TAR write, posted DRW read, RDBUFF read), printing `BEGIN_SRAM` / `address value` lines / `END_SRAM`, then the same for flash, at 115200 baud.
 
 ### Status: memory access blocked
 
-Step 3 currently fails immediately (`ERR 4`, an ADIv5 FAULT response) on the first word of both regions. This was diagnosed in detail -- see [docs/swd-read-methods-research.md](docs/swd-read-methods-research.md) for the full log, including every CSW configuration and SROM call tried. In short: the chip's Silicon ID reads fine via an SROM call (`status=0xA0111B05`, Family ID `0xAB`), proving the CPU is genuinely under debugger control, but every direct memory access -- SRAM, flash, even an unrelated guessed peripheral address -- hard-faults. This matches Infineon's documented **PROTECTED** chip-level protection (programming spec, Appendix A) exactly: Silicon ID readable, flash/SRAM/most registers NACKed. Moving back to OPEN mode is documented as erasing all flash first, so there is no non-destructive path to the existing firmware found or available via these two pins.
+Step 3 currently fails immediately (`ERR 4`, an ADIv5 FAULT response) on the first word of both regions. This was diagnosed in detail -- see [arduino/docs/swd-read-methods-research.md](arduino/docs/swd-read-methods-research.md) for the full log, including every CSW configuration and SROM call tried. In short: the chip's Silicon ID reads fine via an SROM call (`status=0xA0111B05`, Family ID `0xAB`), proving the CPU is genuinely under debugger control, but every direct memory access -- SRAM, flash, even an unrelated guessed peripheral address -- hard-faults. This matches Infineon's documented **PROTECTED** chip-level protection (programming spec, Appendix A) exactly: Silicon ID readable, flash/SRAM/most registers NACKed. Moving back to OPEN mode is documented as erasing all flash first, so there is no non-destructive path to the existing firmware found or available via these two pins.
 
-The diagnostic sequence that established this is preserved as [nano_protection_probe/nano_protection_probe.ino](nano_protection_probe/nano_protection_probe.ino). `dump_mem()` in the main sketch is left as-is: it is the correct, spec-compliant way to read memory and needs no changes if the chip is ever in OPEN mode.
+The diagnostic sequence that established this is preserved as [arduino/nano_protection_probe/nano_protection_probe.ino](arduino/nano_protection_probe/nano_protection_probe.ino). `dump_mem()` in the main sketch is left as-is: it is the correct, spec-compliant way to read memory and needs no changes if the chip is ever in OPEN mode.
 
 ## Known risks / open items
 

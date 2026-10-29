@@ -5,9 +5,9 @@ pins (SWDIO, SWDCLK) using only the Arduino Nano clone as the debug host, why ea
 tried, what the hardware actually did, and the conclusion. Primary sources:
 
 - Infineon "PSoC 4100S" datasheet, doc 002-00122 Rev. *Q, 2024-02-27. Local copy:
-  [docs/datasheets/psoc4100s-datasheet.pdf](datasheets/psoc4100s-datasheet.pdf).
+  [docs/datasheets/psoc4100s-datasheet.pdf](../../docs/datasheets/psoc4100s-datasheet.pdf).
 - Infineon "CY8C4xxx, CYBLxxxx Programming specification", doc 002-22325 Rev. *I, 2024-07-26.
-  Local copy: [docs/datasheets/psoc4-programming-spec.pdf](datasheets/psoc4-programming-spec.pdf).
+  Local copy: [docs/datasheets/psoc4-programming-spec.pdf](../../docs/datasheets/psoc4-programming-spec.pdf).
   This is the authoritative source for the acquire sequence, register addresses, and chip-level
   protection behaviour; all section/page references below are to it unless stated otherwise.
 
@@ -86,7 +86,7 @@ With Test Mode reliably entered, the next step -- reading SRAM via the AP (`TAR`
 the standard ADIv5 sequence, same technique section 4.3's own flowchart uses) -- hard-faulted
 (`ACK=4`, FAULT, not WAIT) on the very first word, and identically for flash. Register-level
 diagnostics (preserved as
-[nano_protection_probe/nano_protection_probe.ino](../nano_protection_probe/nano_protection_probe.ino))
+[arduino/nano_protection_probe/nano_protection_probe.ino](../nano_protection_probe/nano_protection_probe.ino))
 ruled out every protocol-level explanation that was checked:
 
 - **CSW configuration**: tried plain word-size (`0x00000002`, the value proven to work for the

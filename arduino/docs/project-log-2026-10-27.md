@@ -9,7 +9,7 @@ root.
 
 ### 1.1 Target chip
 
-- Package marking (read from close-up photo, [docs/photos/psoc4125-chip-marking-closeup.png](photos/psoc4125-chip-marking-closeup.png)): `CY8C4125` / `LQI-S425` / `2219 A 03` / `CYP616078` / `PHI` / `300` / `DC` (approx layout).
+- Package marking (read from close-up photo, [docs/photos/psoc4125-chip-marking-closeup.png](../../docs/photos/psoc4125-chip-marking-closeup.png)): `CY8C4125` / `LQI-S425` / `2219 A 03` / `CYP616078` / `PHI` / `300` / `DC` (approx layout).
 - Family: Infineon/Cypress PSoC 4100S, Arm Cortex-M0+.
 - Package: 40-pin QFN, 6x6x0.6 mm (JEDEC MO-248, Infineon drawing 001-80659).
 - The exact ordering suffix `S425` does not appear in the datasheet's ordering table (Table 39). The 4125 QFN codes that table does list are S412, S413, S422, S423, S432 and S433. Either the photo's last glyph is misread, or this is a customer-specific/non-catalog code. Not resolved this session.
@@ -20,7 +20,7 @@ root.
 
 The original pin table (from before this session) was audited line-by-line against the datasheet:
 
-- Infineon PSoC 4100S datasheet, doc **002-00122 Rev. *Q, 2024-02-27**. Downloaded to [docs/datasheets/psoc4100s-datasheet.pdf](datasheets/psoc4100s-datasheet.pdf).
+- Infineon PSoC 4100S datasheet, doc **002-00122 Rev. *Q, 2024-02-27**. Downloaded to [docs/datasheets/psoc4100s-datasheet.pdf](../../docs/datasheets/psoc4100s-datasheet.pdf).
 - All 40 pins matched Table 1 (pin list, 40L QFN column, datasheet pp. 16-17) exactly.
 - Pin 1 position and numbering direction matched Figure 10 (package outline, p. 52): pin 1 dot at top-left in top view, pins 1-10 down the left side, 11-20 along the bottom, 21-30 up the right side, 31-40 along the top (right to left).
 - SWDIO = pin 12 = P3.2, alternate function `cpuss.swd_data` (Table 2, Alternate pin functions, p. 18).
@@ -59,7 +59,7 @@ Identified from two photos ([docs/photos/breadboard-pcb-nano-wiring.png](photos/
 
 ## 2. Wiring
 
-Final wiring (3.3 V target, 5 V Nano), per [docs/diagrams/nano-to-psoc-wiring.svg](diagrams/nano-to-psoc-wiring.svg) and [docs/diagrams/psoc4125-pinout-diagram.svg](diagrams/psoc4125-pinout-diagram.svg):
+Final wiring (3.3 V target, 5 V Nano), per [docs/diagrams/nano-to-psoc-wiring.svg](diagrams/nano-to-psoc-wiring.svg) and [docs/diagrams/psoc4125-pinout-diagram.svg](../../docs/diagrams/psoc4125-pinout-diagram.svg):
 
 | Nano pin | Connection | Chip pin |
 |----------|------------|----------|
@@ -79,8 +79,8 @@ A software swap test (D2<->D3 roles swapped in firmware, same physical wiring) w
 
 | File | Document | Revision |
 |------|----------|----------|
-| [docs/datasheets/psoc4100s-datasheet.pdf](datasheets/psoc4100s-datasheet.pdf) | Infineon PSoC 4100S datasheet | 002-00122 Rev. *Q, 2024-02-27 |
-| [docs/datasheets/psoc4-programming-spec.pdf](datasheets/psoc4-programming-spec.pdf) | Infineon CY8C4xxx, CYBLxxxx Programming specification | 002-22325 Rev. *I, 2024-07-26 |
+| [docs/datasheets/psoc4100s-datasheet.pdf](../../docs/datasheets/psoc4100s-datasheet.pdf) | Infineon PSoC 4100S datasheet | 002-00122 Rev. *Q, 2024-02-27 |
+| [docs/datasheets/psoc4-programming-spec.pdf](../../docs/datasheets/psoc4-programming-spec.pdf) | Infineon CY8C4xxx, CYBLxxxx Programming specification | 002-22325 Rev. *I, 2024-07-26 |
 
 Both downloaded directly from infineon.com during this session. The programming specification is the primary source for the acquire sequence, register addresses/values, and chip-level protection behaviour used throughout §4 and §5 below; section/page numbers cited are from it unless noted otherwise.
 
@@ -341,7 +341,12 @@ Parses `BEGIN_<name>` / `ADDR VALUE` / `END_<name>` blocks from a captured log i
 
 Validated against a synthetic log (not real chip data, used only to exercise the parser): manually computed the Intel HEX checksums by hand for both an ELA record and a data record and confirmed they matched the script's output (`0xDA` and `0xF7` respectively, via the standard two's-complement-of-byte-sum algorithm), and confirmed the ELA record correctly encoded a `0x20000000` base address.
 
-## 7. Repository structure (current)
+## 7. Repository structure (as of this session; reorganized later)
+
+Note: on 2026-10-29, `nano_swd_dump/`, `nano_protection_probe/` and `scripts/` were moved under
+a new `arduino/` folder (alongside a new, separate `beaglebone/` folder) to make room for a
+second debug host. The structure below reflects the repo exactly as it stood at the end of this
+session, before that move -- see the top-level README for the current layout.
 
 ```
 README.md
