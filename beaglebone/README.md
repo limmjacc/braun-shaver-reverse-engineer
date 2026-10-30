@@ -1,20 +1,35 @@
 # BeagleBone Black
 
-Placeholder for work using a BeagleBone Black as a (likely faster, more capable) SWD debug host
-in place of the Arduino Nano clone used in [/arduino](../arduino). Nothing BBB-specific has been
-built yet; this records the board's as-received state and how to reach it.
+A BeagleBone Black used both as a general Linux-based hardware platform and as a candidate
+(likely faster, more capable) SWD debug host in place of the Arduino Nano clone used in
+[/arduino](../arduino).
 
-## Board, as received (2026-10-29)
+PRU-driven deterministic GPIO work is documented in
+[docs/pru-4pin-gpio.md](docs/pru-4pin-gpio.md), source in [pru/](pru/).
 
-- Fresh out of the box, factory image: **Debian GNU/Linux 7**, kernel `3.8.13-bone47 #1 SMP Fri
-  Apr 11 01:36:09 UTC 2014 armv7l`. This is the original 2014 factory eMMC image BeagleBoard.org
-  shipped on new boards for years; current images are far newer. Reflashing is worth considering
-  before building anything on this board (see below).
-- Hostname: `beaglebone`.
-- Default login: `debian` / `temppwd`.
+## Board, current state (2026-10-30)
+
+- Reflashed from the original 2014 factory image to a current BeagleBoard.org image: **Debian
+  GNU/Linux 13 (trixie)**, kernel `6.18.55-bone57`, build `am335x-debian-13.7-base-v6.18-armhf-2026-10-09-4gb`.
+  Reflash was done via the board's own `enable-beagle-flasher` / `beagle-flasher` tooling
+  (`bb-beagle-flasher` package), which writes U-Boot and copies the running SD card's rootfs
+  directly onto the internal eMMC (`/dev/mmcblk1`) -- not the older `uEnv.txt`-edit-based
+  `init-eMMC-flasher-v3.sh` mechanism described in older BeagleBoard docs, which is superseded on
+  this image.
+- Hostname: `BeagleBone`. Login: `debian` / a password set during bring-up (not the default
+  `temppwd` shown in the stock login banner -- that banner text is static and does not reflect
+  whether the password has already been changed).
+- Root filesystem on `/dev/mmcblk1p3` (eMMC), boot/firmware FAT partition on `/dev/mmcblk1p1`
+  mounted at `/boot/firmware`. U-Boot's own config/overlay file is `/boot/uEnv.txt` on the ext4
+  root, not on the FAT partition -- the FAT partition only holds a legacy USB-mass-storage
+  "getting started" payload (`ID.txt`, `START.HTM`, `sysconf.txt`).
+- No RTC battery: clock resets to the image build date on every power-up. NTP (`systemd-timesyncd`)
+  did not auto-sync over the USB network path in testing (likely a NAT/UDP quirk in macOS Internet
+  Sharing); set manually with `sudo date -u -s "YYYY-MM-DD HH:MM:SS"` if `apt` signature
+  verification fails with "Not live until ...".
 - USB enumeration on macOS: a composite USB device (`bDeviceClass=239`, `bDeviceSubClass=2`,
   i.e. a multi-interface/"miscellaneous" composite device), identified in `ioreg -p IOUSB -l` as
-  `BeagleBoneBlack@...`, USB vendor name `Circuitco` (the board's original manufacturer).
+  `BeagleBoneBlack@...`.
 
 ## Connecting
 
@@ -41,31 +56,30 @@ The IP Address for usb0 is: 192.168.7.2
 beaglebone login:
 ```
 
-### USB networking (not yet working on this Mac)
+### USB networking (working, via macOS Internet Sharing)
 
-The board's own `usb0` interface is configured at `192.168.7.2` (per the banner above), which
-would normally let the host reach it directly over `ssh debian@192.168.7.2` and the bundled
-Cloud9 IDE, once the host side is assigned the conventional `192.168.7.1`. On this Mac, the
-board enumerates two candidate virtual Ethernet interfaces (seen as `en3`/`en4` via
-`networksetup -listallhardwareports`, both labelled generic "Ethernet Adapter"), but both show
-`status: inactive` / `media: none` -- no link negotiated on the host side, even well after the
-board finished booting (confirmed separately via the serial console). Assigning either a static
-IP (`192.168.7.1`/`255.255.255.0`) requires admin/`sudo` privileges not available in the
-session that set this up; this was not resolved, only documented. A real terminal with an
-interactive `sudo` password, or manually adding a manual-IP network service in **System
-Settings -> Network** for whichever of the two interfaces corresponds to the board, is the
-likely next step.
+The board's own `usb0` interface is configured at `192.168.7.2`. To give it internet access from
+the Mac: **System Settings -> General -> Sharing -> Internet Sharing**, share the Mac's working
+connection (e.g. Wi-Fi) "to computers using" the Ethernet adapter that appears for the BBB's USB
+link. This assigns the Mac side `192.168.7.1` and NATs traffic through. The board itself needs a
+manual default route added on top (its static `192.168.7.2/30` config has no gateway by default):
 
-## Before building anything here
+```sh
+sudo ip route add default via 192.168.7.1
+```
 
-Worth doing early, before this becomes the debug host for further SWD work:
+IPv6 and most IPv4 destinations worked after this; a couple of specific IPv4 hosts
+(`debian.beagleboard.org`, `rcn-ee.com` -- BeagleBoard's own extra package repos) returned "No
+route to host" in testing, origin not fully diagnosed, but core `deb.debian.org` /
+`security.debian.org` access (and therefore `apt update && apt full-upgrade`) worked fine.
 
-- **Reflash to a current image.** The 2014 factory image is well past end-of-support; a current
-  Debian or minimal image from beagleboard.org (or balenaEtcher/`bbb-eMMC-flasher`) would be a
-  more sensible base, especially if the plan is to run OpenOCD, pyOCD, or similar directly on
-  the board against the shaver's SWD pins.
-- **Decide the role.** If this is meant to replace the Arduino as the SWD host (its Linux
-  userspace, real GPIO count, and access to mature tools like OpenOCD/pyOCD would remove the
-  bit-bang-timing problems documented in [../arduino/docs/swd-read-methods-research.md](../arduino/docs/swd-read-methods-research.md)), that's a different code path from the Arduino sketches in
-  [/arduino](../arduino) -- most likely a Python or C tool using `libgpiod`/sysfs GPIO plus an
-  existing SWD library, rather than a from-scratch bit-bang like the Nano's.
+## Role
+
+This board currently serves as a general PRU/Linux hardware platform (see
+[docs/pru-4pin-gpio.md](docs/pru-4pin-gpio.md)) and remains a candidate to replace the Arduino as
+the SWD debug host for the shaver chip -- its Linux userspace, real GPIO count, and access to
+mature tools like OpenOCD/pyOCD would remove the bit-bang-timing problems documented in
+[../arduino/docs/swd-read-methods-research.md](../arduino/docs/swd-read-methods-research.md).
+That would be a different code path from the Arduino sketches in [/arduino](../arduino) -- most
+likely a Python or C tool using `libgpiod`/sysfs GPIO plus an existing SWD library, rather than a
+from-scratch bit-bang like the Nano's. Not yet started.

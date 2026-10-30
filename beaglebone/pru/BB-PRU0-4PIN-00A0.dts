@@ -1,0 +1,53 @@
+/dts-v1/;
+/plugin/;
+#include <dt-bindings/pinctrl/am33xx.h>
+
+/*
+ * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+ */
+&{/chosen} {
+	overlays {
+		BB-PRU0-4PIN-00A0.kernel = __TIMESTAMP__;
+	};
+};
+
+/*
+ * mcasp0 (HDMI audio) claims the same physical pads as the 4 pins below
+ * by default. It must be disabled, or pinctrl-single refuses to hand the
+ * pins to the PRU ("pin PIN100 already requested by 48038000.mcasp").
+ * Trade-off: this disables HDMI audio output. HDMI video is unaffected.
+ */
+&mcasp0 {
+	status = "disabled";
+};
+
+/*
+ * Free the pins from the board's generic pinmux-helper nodes.
+ */
+&ocp {
+	P9_28_pinmux { status = "disabled"; }; /* P9_28 mcasp0_ahclkr -> pr1_pru0_pru_r30_3 */
+	P9_29_pinmux { status = "disabled"; }; /* P9_29 mcasp0_fsx    -> pr1_pru0_pru_r30_1 */
+	P9_30_pinmux { status = "disabled"; }; /* P9_30 mcasp0_axr0   -> pr1_pru0_pru_r30_2 */
+	P9_31_pinmux { status = "disabled"; }; /* P9_31 mcasp0_aclkx  -> pr1_pru0_pru_r30_0 */
+};
+
+&am33xx_pinmux {
+	bb_pru0_out_pins: pinmux_bb_pru0_out_pins {
+		pinctrl-single,pins = <
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_ACLKX,  PIN_OUTPUT_PULLDOWN, MUX_MODE5) /* P9_31 r30_0 */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_FSX,    PIN_OUTPUT_PULLDOWN, MUX_MODE5) /* P9_29 r30_1 */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_AXR0,   PIN_OUTPUT_PULLDOWN, MUX_MODE5) /* P9_30 r30_2 */
+			AM33XX_PADCONF(AM335X_PIN_MCASP0_AHCLKR, PIN_OUTPUT_PULLDOWN, MUX_MODE5) /* P9_28 r30_3 */
+		>;
+	};
+};
+
+&pruss_tm {
+	status = "okay";
+};
+
+&pru0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&bb_pru0_out_pins>;
+};
